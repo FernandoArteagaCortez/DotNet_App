@@ -1,0 +1,16 @@
+$target=[System.EnvironmentVariableTarget]::Process
+[System.Environment]::SetEnvironmentVariable("CORECLR_ENABLE_PROFILING","1",$target)
+[System.Environment]::SetEnvironmentVariable("CORECLR_PROFILER","{846F5F1C-F9AE-4B07-969E-05C26BC060D8}",$target)
+[System.Environment]::SetEnvironmentVariable("COR_ENABLE_PROFILING","1",$target)
+[System.Environment]::SetEnvironmentVariable("COR_PROFILER","{846F5F1C-F9AE-4B07-969E-05C26BC060D8}",$target)
+[System.Environment]::SetEnvironmentVariable("DD_ENV","dev",$target)
+[System.Environment]::SetEnvironmentVariable("DD_VERSION","1.0",$target)
+[System.Environment]::SetEnvironmentVariable("DD_LOGS_INJECTION","true",$target)
+[System.Environment]::SetEnvironmentVariable("DD_SERVICE","security-app-dotnet",$target)
+[System.Environment]::SetEnvironmentVariable("DD_PROFILING_ENABLED","true",$target)
+[System.Environment]::SetEnvironmentVariable("DD_RUNTIME_METRICS_ENABLED","true",$target)
+[System.Environment]::SetEnvironmentVariable("DD_DBM_PROPAGATION_MODE","full",$target)
+[System.Environment]::SetEnvironmentVariable("DD_IAST_ENABLED","true",$target)
+[System.Environment]::SetEnvironmentVariable("DD_APPSEC_ENABLED","true",$target)
+[System.Environment]::SetEnvironmentVariable("DD_APPSEC_SCA_ENABLED","true",$target)
+dotnet run

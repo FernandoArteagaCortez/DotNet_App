@@ -28,4 +28,27 @@ public class HomeController : Controller
         HttpContext.Session.Clear();
         return RedirectToAction("Index");
     }
+
+    [HttpGet("vulnerable/file")]
+    public IActionResult GetVulnerableFile(string name)
+    {
+        try 
+        {
+            // Esto intenta leer cualquier archivo que le pidas por el parámetro 'name'
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", name);
+            
+            if (!System.IO.File.Exists(path)) {
+                return NotFound("Archivo no encontrado en: " + path);
+            }
+
+            var content = System.IO.File.ReadAllText(path);
+            return Ok(content);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest("Error al leer archivo: " + ex.Message);
+        }
+    }
+
+    
 }
