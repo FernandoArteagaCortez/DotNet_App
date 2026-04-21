@@ -1,15 +1,5 @@
 var builder = WebApplication.CreateBuilder(args);
-// Esto es una vulnerabilidad de "Hardcoded Secret"
-var connectionString = "Server=myServerAddress;Database=myDataBase;User Id=admin;Password=Password123!;";
 
-// Esto podría disparar una alerta de criptografía débil
-var hash = System.Security.Cryptography.MD5.Create();
-
-// Esto es una vulnerabilidad de "Hardcoded Secret"
-var connectionString = "Server=myServerAddress;Database=myDataBase;User Id=admin;Password=Password123!;";
-
-// Esto podría disparar una alerta de criptografía débil
-var hash = System.Security.Cryptography.MD5.Create();
 // 1. Agregar servicios de MVC y Sesión
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession(options => {

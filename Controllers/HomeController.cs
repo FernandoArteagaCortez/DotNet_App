@@ -20,6 +20,8 @@ public class HomeController : Controller
     public IActionResult Dashboard() => View();
     public IActionResult Bicicletas() => View();
     public IActionResult Sensible() => View();
+    public IActionResult Confidencial() => View();
+
 
     public IActionResult Logout()
     {

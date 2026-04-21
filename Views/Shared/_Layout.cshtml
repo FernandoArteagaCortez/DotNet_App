@@ -36,13 +36,22 @@
     const horaActual = ahora.getHours();
     const minutosActuales = ahora.getMinutes();
 
-    // --- CONFIGURACIÓN DE RANGO ---
-    const horaInicio = 15; // 3 PM
-    const horaFin = 19;    // 7 PM
+   // --- CONFIGURACIÓN DE RANGO ---
+    const horaInicio = 10; // 3 PM
+    const horaFin = 2;    // 2 AM (del día siguiente)
     // ------------------------------
 
-    const estaEnRangoHorario = (horaActual >= horaInicio && horaActual < horaFin);
+    let estaEnRangoHorario;
 
+    if (horaInicio > horaFin) {
+        // Caso nocturno (cruza medianoche): 
+        // Es mayor a las 3 PM O menor a las 2 AM
+        estaEnRangoHorario = (horaActual >= horaInicio || horaActual < horaFin);
+    } else {
+        // Caso normal (mismo día): 
+        // Entre horaInicio y horaFin
+        estaEnRangoHorario = (horaActual >= horaInicio && horaActual < horaFin);
+    }
     // Formateo para el mensaje (convertir 15 a 3 PM, etc.)
     const fmt = (h) => h >= 12 ? (h === 12 ? 12 : h - 12) + " PM" : h + " AM";
     const mensajeRango = `(${fmt(horaInicio)} - ${fmt(horaFin)})`;
@@ -52,9 +61,8 @@
     console.log(estaEnRangoHorario ? `✅ Dentro del rango ${mensajeRango}` : `❌ Fuera del rango horario ${mensajeRango}`);
 
     // 3. CONDICIÓN MAESTRA: Usuario + Tiempodot
-    if (USER_ID === "FernandoArteaga99" && estaEnRangoHorario) {
-        
-        console.log("🚀 Iniciando Datadog RUM: Usuario y Horario validados.");
+    if ((USER_ID === "FernandoA" || USER_ID === "SergioV") && estaEnRangoHorario) {        
+        console.log("🔎Iniciando Datadog RUM (Solo Acciones) Usuario y Horario validados.");
 
         window.DD_RUM && window.DD_RUM.init({
             applicationId: '5a827de8-cb36-4cee-b546-14d10f42c015',
@@ -62,7 +70,7 @@
             site: 'datadoghq.com',
             service: 'security-app-dotnet',
             env: 'dev',
-            version: '1.0.0',
+            version: '2.0.0',
             sessionSampleRate: 100,
             sessionReplaySampleRate: 100,
             trackResources: true,
@@ -72,27 +80,44 @@
             startSessionReplayRecordingManually: true 
         });
 
+        // --- SIMULACIÓN DE FEATURE FLAGS ---
+        
+        // Supongamos que queremos probar una nueva función de "Reporte con Foto" 
+        // y solo está activa para Fernando.
+        const misFlags = {
+            "experimental_photo_report": (USER_ID === "SergioV"),
+            "new_ui_theme": "dark_mode",
+            "ai_incident_summary": true
+        };
+
+        // Enviamos las flags a Datadog
+        for (const [key, value] of Object.entries(misFlags)) {
+            window.DD_RUM.addFeatureFlagEvaluation(key, value);
+        }
+
+        console.log("🚩 Feature Flags enviadas a Datadog:", misFlags);
+
         // 4. LÓGICA DE VISTAS
-        if (CURRENT_PATH.includes("Sensible")) {
+        if (CURRENT_PATH.includes("Sensible")|| CURRENT_PATH.includes("Confidencial")) {
             window.DD_RUM.startSessionReplayRecording();
-            console.warn("🔴 GRABANDO REPLAY: Sección sensible activa.");
+            console.warn("🔴 GRABANDO Video de Sesión: Sección sensible activa.");
         } 
         else if (CURRENT_PATH.includes("Bicicletas")) {
             window.DD_RUM.stopSessionReplayRecording();
-            console.info("⚠️ Grabación detenida: Sección Bicicletas.");
+            console.info("⚠️ Grabación de video detenida: Sección Bicicletas.");
         }
         else {
-            console.log("⏳ DASHBOARD: RUM activo, Replay pausado.");
+            console.log("--- Actualmente solo se graban acciones sin video ---");
         }
 
         window.DD_RUM.setUser({ id: USER_ID, name: USER_ID, plan: 'admin-test' });
 
     } else {
         // Explicación de por qué no graba
-        if (USER_ID !== "FernandoArteaga99") {
-            console.log("⚪ Datadog RUM omitido: El usuario no es FernandoArteaga99.");
+        if (USER_ID !== "FernandoA" && USER_ID !== "SergioV" ) {
+            console.log("⚪ Datadog RUM omitido: El usuario no es de interes.");
         } else if (!estaEnRangoHorario) {
-            console.log("⚪ Datadog RUM omitido: Fuera del horario permitido (13:00-13:30).");
+            console.log("⚪ Datadog RUM omitido: Fuera del horario de interes.");
         }
     }
 </script>
