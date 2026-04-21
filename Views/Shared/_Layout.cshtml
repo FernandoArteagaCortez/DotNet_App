@@ -31,19 +31,27 @@
     const USER_ID = "@Context.Session.GetString("UsuarioLogueado")";
     const CURRENT_PATH = window.location.pathname;
 
-    // 2. Lógica de Tiempo
+   // 2. Lógica de Tiempo Dinámica (Solo Horas)
     const ahora = new Date();
-    const hora = ahora.getHours();
-    const minutos = ahora.getMinutes();
-    
-    // Condición: 13:00 a 13:30
-    const estaEnRangoHorario = (hora === 13 && minutos >= 0 && minutos <= 40);
+    const horaActual = ahora.getHours();
+    const minutosActuales = ahora.getMinutes();
+
+    // --- CONFIGURACIÓN DE RANGO ---
+    const horaInicio = 15; // 3 PM
+    const horaFin = 19;    // 7 PM
+    // ------------------------------
+
+    const estaEnRangoHorario = (horaActual >= horaInicio && horaActual < horaFin);
+
+    // Formateo para el mensaje (convertir 15 a 3 PM, etc.)
+    const fmt = (h) => h >= 12 ? (h === 12 ? 12 : h - 12) + " PM" : h + " AM";
+    const mensajeRango = `(${fmt(horaInicio)} - ${fmt(horaFin)})`;
 
     console.log("--- MONITOR DE SEGURIDAD ---");
-    console.log(`Hora actual: ${hora}:${minutos < 10 ? '0' + minutos : minutos}`);
-    console.log(estaEnRangoHorario ? "✅ Dentro del rango (13:00 - 13:30)" : "❌ Fuera del rango horario");
+    console.log(`Hora actual: ${horaActual}:${minutosActuales < 10 ? '0' + minutosActuales : minutosActuales}`);
+    console.log(estaEnRangoHorario ? `✅ Dentro del rango ${mensajeRango}` : `❌ Fuera del rango horario ${mensajeRango}`);
 
-    // 3. CONDICIÓN MAESTRA: Usuario + Tiempo
+    // 3. CONDICIÓN MAESTRA: Usuario + Tiempodot
     if (USER_ID === "FernandoArteaga99" && estaEnRangoHorario) {
         
         console.log("🚀 Iniciando Datadog RUM: Usuario y Horario validados.");

@@ -95,3 +95,4 @@ C:\Users\artea\Desktop\Nuevo Leon\SeguridadApp\obj\Debug\net10.0\refint\Segurida
 C:\Users\artea\Desktop\Nuevo Leon\SeguridadApp\obj\Debug\net10.0\SeguridadApp.pdb
 C:\Users\artea\Desktop\Nuevo Leon\SeguridadApp\obj\Debug\net10.0\SeguridadApp.genruntimeconfig.cache
 C:\Users\artea\Desktop\Nuevo Leon\SeguridadApp\obj\Debug\net10.0\ref\SeguridadApp.dll
+C:\Users\artea\Desktop\Nuevo Leon\SeguridadApp\obj\Debug\net10.0\SeguridadApp.sourcelink.json
