@@ -3,13 +3,13 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Seguridad RUM App</title>
+    <title>Seguridad RUM App - Producción</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50">
     <header>
         <nav class="bg-slate-900 p-4 text-white flex justify-between items-center shadow-lg">
-            <span class="font-bold tracking-wider text-xl">🛡️ SECURITY-NET</span>
+            <span class="font-bold tracking-wider text-xl">🛡️ SECURITY-NET (Auto-instrumentado)</span>
             <div>
                 @if (Context.Session.GetString("UsuarioLogueado") != null)
                 {
@@ -24,100 +24,5 @@
         @RenderBody()
     </main>
 
-    <script src="https://www.datadoghq-browser-agent.com/us1/v6/datadog-rum.js" type="text/javascript" crossorigin></script>
-
-<script>
-    // 1. Variables de Identidad y Ruta
-    const USER_ID = "@Context.Session.GetString("UsuarioLogueado")";
-    const CURRENT_PATH = window.location.pathname;
-
-   // 2. Lógica de Tiempo Dinámica (Solo Horas)
-    const ahora = new Date();
-    const horaActual = ahora.getHours();
-    const minutosActuales = ahora.getMinutes();
-
-   // --- CONFIGURACIÓN DE RANGO ---
-    const horaInicio = 9; // 3 PM
-    const horaFin = 18;    // 2 AM (del día siguiente)
-    // ------------------------------
-
-    let estaEnRangoHorario;
-
-    if (horaInicio > horaFin) {
-        // Caso nocturno (cruza medianoche): 
-        // Es mayor a las 3 PM O menor a las 2 AM
-        estaEnRangoHorario = (horaActual >= horaInicio || horaActual < horaFin);
-    } else {
-        // Caso normal (mismo día): 
-        // Entre horaInicio y horaFin
-        estaEnRangoHorario = (horaActual >= horaInicio && horaActual < horaFin);
-    }
-    // Formateo para el mensaje (convertir 15 a 3 PM, etc.)
-    const fmt = (h) => h >= 12 ? (h === 12 ? 12 : h - 12) + " PM" : h + " AM";
-    const mensajeRango = `(${fmt(horaInicio)} - ${fmt(horaFin)})`;
-
-    console.log("--- MONITOR DE SEGURIDAD ---");
-    console.log(`Hora actual: ${horaActual}:${minutosActuales < 10 ? '0' + minutosActuales : minutosActuales}`);
-    console.log(estaEnRangoHorario ? `✅ Dentro del rango ${mensajeRango}` : `❌ Fuera del rango horario ${mensajeRango}`);
-
-    // 3. CONDICIÓN MAESTRA: Usuario + Tiempodot
-    if ((USER_ID === "FernandoA" || USER_ID === "SergioV" || USER_ID === "UzzielS") && estaEnRangoHorario) {        
-        console.log("🔎Iniciando Datadog RUM (Solo Acciones) Usuario y Horario validados.");
-
-        window.DD_RUM && window.DD_RUM.init({
-            applicationId: '5a827de8-cb36-4cee-b546-14d10f42c015',
-            clientToken: 'pub3fce7a4b328a9f262bf1c8f253fa78bb',
-            site: 'datadoghq.com',
-            service: 'security-app-dotnet',
-            env: 'dev',
-            version: '2.0.0',
-            sessionSampleRate: 100,
-            sessionReplaySampleRate: 100,
-            trackResources: true,
-            trackUserInteractions: true,
-            trackLongTasks: true,
-            defaultPrivacyLevel: 'allow',
-            startSessionReplayRecordingManually: true 
-        });
-
-        // --- SIMULACIÓN DE FEATURE FLAGS ---
-        
-        const misFlags = {
-            "experimental_especial_permissions": (USER_ID === "UzzielS"),
-            "new_ui_theme": "dark_mode",
-            "ai_incident_summary": true
-        };
-
-        // Enviamos las flags a Datadog
-        for (const [key, value] of Object.entries(misFlags)) {
-            window.DD_RUM.addFeatureFlagEvaluation(key, value);
-        }
-
-        console.log("🚩 Feature Flags enviadas a Datadog:", misFlags);
-
-        // 4. LÓGICA DE VISTAS
-        if (CURRENT_PATH.includes("Sensible")|| CURRENT_PATH.includes("Confidencial")) {
-            window.DD_RUM.startSessionReplayRecording();
-            console.warn("🔴 GRABANDO Video de Sesión: Sección sensible activa.");
-        } 
-        else if (CURRENT_PATH.includes("Bicicletas")) {
-            window.DD_RUM.stopSessionReplayRecording();
-            console.info("⚠️ Grabación de video detenida: Sección Bicicletas.");
-        }
-        else {
-            console.log("--- Actualmente solo se graban acciones sin video ---");
-        }
-
-        window.DD_RUM.setUser({ id: USER_ID, name: USER_ID, plan: 'admin-test' });
-
-    } else {
-        // Explicación de por qué no graba
-        if (USER_ID !== "FernandoA" && USER_ID !== "SergioV" && USER_ID !== "UzzielS" ) {
-            console.log("⚪ Datadog RUM omitido: El usuario no es de interes.");
-        } else if (!estaEnRangoHorario) {
-            console.log("⚪ Datadog RUM omitido: Fuera del horario de interes.");
-        }
-    }
-</script>
-</body>
+    </body>
 </html>
