@@ -37,8 +37,8 @@
     const minutosActuales = ahora.getMinutes();
 
    // --- CONFIGURACIÓN DE RANGO ---
-    const horaInicio = 10; // 3 PM
-    const horaFin = 2;    // 2 AM (del día siguiente)
+    const horaInicio = 9; // 3 PM
+    const horaFin = 18;    // 2 AM (del día siguiente)
     // ------------------------------
 
     let estaEnRangoHorario;
@@ -61,7 +61,7 @@
     console.log(estaEnRangoHorario ? `✅ Dentro del rango ${mensajeRango}` : `❌ Fuera del rango horario ${mensajeRango}`);
 
     // 3. CONDICIÓN MAESTRA: Usuario + Tiempodot
-    if ((USER_ID === "FernandoA" || USER_ID === "SergioV") && estaEnRangoHorario) {        
+    if ((USER_ID === "FernandoA" || USER_ID === "SergioV" || USER_ID === "UzzielS") && estaEnRangoHorario) {        
         console.log("🔎Iniciando Datadog RUM (Solo Acciones) Usuario y Horario validados.");
 
         window.DD_RUM && window.DD_RUM.init({
@@ -82,10 +82,8 @@
 
         // --- SIMULACIÓN DE FEATURE FLAGS ---
         
-        // Supongamos que queremos probar una nueva función de "Reporte con Foto" 
-        // y solo está activa para Fernando.
         const misFlags = {
-            "experimental_photo_report": (USER_ID === "SergioV"),
+            "experimental_especial_permissions": (USER_ID === "UzzielS"),
             "new_ui_theme": "dark_mode",
             "ai_incident_summary": true
         };
@@ -114,7 +112,7 @@
 
     } else {
         // Explicación de por qué no graba
-        if (USER_ID !== "FernandoA" && USER_ID !== "SergioV" ) {
+        if (USER_ID !== "FernandoA" && USER_ID !== "SergioV" && USER_ID !== "UzzielS" ) {
             console.log("⚪ Datadog RUM omitido: El usuario no es de interes.");
         } else if (!estaEnRangoHorario) {
             console.log("⚪ Datadog RUM omitido: Fuera del horario de interes.");
